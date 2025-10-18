@@ -1,0 +1,36 @@
+<h1>Le tableau comporte
+	{{authors | length}}
+	auteurs
+</h1>
+
+{% if authors is empty or authors is not defined %}
+	<h2>Verifier votre tableau</h2>
+{% else %}
+	<table border="1">
+		<tr>
+			<th>Identifiant</th>
+			<th>Auteur</th>
+			<th>Email de l'auteur</th>
+			<th>Photo</th>
+			<th>Nombre de livre</th>
+		</tr>
+		{% set l=0 %}
+		{% for author in authors %}
+			<tr>
+				<td>{{author.id }}</td>
+				<td>{{author.username | upper}}</td>
+				<td>{{author.email}}</td>
+				<td><img src="{{author.picture}}" width="150"></td>
+				<td>{{author.nb_books}}
+					Livres</td>
+				{% set l=l+author.nb_books %}
+				<td>
+					<a href="{{path('app_detailsAuthors', {'id': author.id })}}">Details</a>
+				</td>
+			</tr>
+		{% endfor %}
+	</table>
+	<h1>Le nombre de livres de tous les auteurs=
+		{{l}}
+	</h1>
+{% endif %}
