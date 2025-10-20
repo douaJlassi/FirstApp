@@ -6,13 +6,16 @@
 {% if authors is empty or authors is not defined %}
 	<h2>Verifier votre tableau</h2>
 {% else %}
+	<a href="{{ path('author_insertAuthor')}}">Ajouter un nouveau auteur</a>
 	<table border="1">
 		<tr>
 			<th>Identifiant</th>
 			<th>Auteur</th>
 			<th>Email de l'auteur</th>
-			<th>Photo</th>
+			{# <th>Photo</th> #}
 			<th>Nombre de livre</th>
+			<th colspan="3">Actions</th>
+			
 		</tr>
 		{% set l=0 %}
 		{% for author in authors %}
@@ -20,12 +23,18 @@
 				<td>{{author.id }}</td>
 				<td>{{author.username | upper}}</td>
 				<td>{{author.email}}</td>
-				<td><img src="{{author.picture}}" width="150"></td>
-				<td>{{author.nb_books}}
+				{# <td><img src="{{author.picture}}" width="150"></td> #}
+				<td>{{author.nbBooks}}
 					Livres</td>
-				{% set l=l+author.nb_books %}
+				{% set l=l+author.nbBooks %}
 				<td>
-					<a href="{{path('app_detailsAuthors', {'id': author.id })}}">Details</a>
+					<a href="{{path('author_getAuthor', {'id': author.id })}}">Details</a>
+				</td>
+				<td>
+					<a href="{{path('author_updateAuthor', {'id': author.id })}}">Edit</a>
+				</td>
+				<td>
+					<a href="{{path('author_deleteAuthor', {'id': author.id })}}">Delete</a>
 				</td>
 			</tr>
 		{% endfor %}
