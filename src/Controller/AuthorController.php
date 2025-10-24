@@ -106,24 +106,24 @@ final class AuthorController extends AbstractController
         $author = new Author();
         $form = $this->createForm(AuthorType::class, $author);
         $form->handleRequest($request);
-        if($form->isSubmitted()){
+        if ($form->isSubmitted()) {
             $mr->persist($author);
             $mr->flush();
             return $this->redirectToRoute("author_getAuthors");
         }
-        return $this->render('author/form.html.twig',[
+        return $this->render('author/form.html.twig', [
             'authorForm' => $form,
         ]);
     }
 
     #[Route('/update/{id}', name: 'author_updateAuthor')]
-    public function updateAuthor(EntityManagerInterface $mr, Request $request,$id): Response
+    public function updateAuthor(EntityManagerInterface $mr, Request $request, $id): Response
     {
         $author = new Author();
         $author = $mr->getRepository(Author::class)->find($id);
         $form = $this->createForm(AuthorType::class, $author);
         $form->handleRequest($request);
-        if($form->isSubmitted()){
+        if ($form->isSubmitted()) {
             $mr->persist($author);
             $mr->flush();
             return $this->redirectToRoute("author_getAuthors");
@@ -134,7 +134,7 @@ final class AuthorController extends AbstractController
         ]);
     }
 
-    #[Route('/delete/{id}', name:"author_deleteAuthor")]
+    #[Route('/delete/{id}', name: "author_deleteAuthor")]
     public function deleteAuthor(EntityManagerInterface $mr, Request $request, $id): Response
     {
         $author = $mr->getRepository(Author::class)->find($id);
@@ -144,10 +144,33 @@ final class AuthorController extends AbstractController
     }
 
     #[Route('/details/{id}', name: 'author_getAuthor')]
-    public function getAuthor(AuthorRepository $authRepo, $id):Response
+    public function getAuthor(AuthorRepository $authRepo, $id): Response
     {
-        return $this->render('author/showAuthor.html.twig',[
-            'auth'=>$authRepo->find($id),
+        return $this->render('author/showAuthor.html.twig', [
+            'auth' => $authRepo->find($id),
+        ]);
+    }
+
+    #[Route('/authors/searchByBooks', name: 'author_search_by_books')]
+    public function searchAuthorsByBooks(Request $request, AuthorRepository $authorRepo): Response
+    {
+        $min = $request->query->get('min');
+        $max = $request->query->get('max');
+
+        $authors = $authorRepo->findAuthorsByBookRange($min, $max);
+
+        return $this->render('author/searchByBooks.html.twig', [
+            'authors' => $authors,
+        ]);
+    }
+
+    #[Route('/authors/deleteEmpty', name: 'author_delete_empty')]
+    public function deleteAuthorsWithNoBooks(AuthorRepository $authorRepo): Response
+    {
+        $deletedCount = $authorRepo->deleteAuthorsWithNoBooks();
+
+        return $this->render('author/deleteEmptyResult.html.twig', [
+            'count' => $deletedCount,
         ]);
     }
 }

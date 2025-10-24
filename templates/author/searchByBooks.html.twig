@@ -1,0 +1,22 @@
+<h1>Rechercher l'auteur par nombre de livres </h1>
+
+<form method="get" action="{{ path('author_search_by_books') }}">
+	<input type="number" name="min" placeholder="Min livres">
+	<input type="number" name="max" placeholder="Max livres">
+	<button type="submit">Search</button>
+</form>
+
+{% if authors is not empty %}
+	<table border="1">
+		<tr>
+			<th>Nom</th>
+			<th>Nombre de livres</th>
+		</tr>
+		{% for a in authors %}
+			<tr>
+				<td>{{ a.username }}</td>
+				<td>{{ a.nbBooks }}</td>
+			</tr>
+		{% endfor %}
+	</table>
+{% endif %}

@@ -43,6 +43,7 @@ class BookRepository extends ServiceEntityRepository
     //        ;
     //    }
 
+    //QueryBuilder
     public function searchBookByRef($ref): array
     {
         return $this->createQueryBuilder('b')
@@ -76,13 +77,45 @@ class BookRepository extends ServiceEntityRepository
 
     public function updateCategoryScience(): int
     {
-        $query= $this->createQueryBuilder('b')
-        ->update()
-        ->set('b.category' ,':newCategory')
-        ->where('b.category =:oldCategory')
-        ->setParameter('newCategory', 'Romance')
-        ->setParameter('oldCategory', 'Science-Fiction')
-        ->getQuery();
+        $query = $this->createQueryBuilder('b')
+            ->update()
+            ->set('b.category', ':newCategory')
+            ->where('b.category =:oldCategory')
+            ->setParameter('newCategory', 'Romance')
+            ->setParameter('oldCategory', 'Science-Fiction')
+            ->getQuery();
         return $query->execute();
     }
+
+    //DQL
+
+    public function countBooksByRomanceCategory(): int
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT COUNT(b.id)
+         FROM App\Entity\Book b
+         WHERE b.category = :category'
+        )->setParameter('category', 'Romance');
+
+        return $query->getSingleScalarResult();
+    }
+
+    public function findBooksBetweenDates(\DateTime $start, \DateTime $end): array
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'SELECT b
+         FROM App\Entity\Book b
+         WHERE b.publishDate BETWEEN :start AND :end'
+        )
+            ->setParameter('start', $start)
+            ->setParameter('end', $end);
+
+        return $query->getResult();
+    }
+
+    
 }

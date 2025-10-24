@@ -40,13 +40,38 @@ class AuthorRepository extends ServiceEntityRepository
     //            ->getOneOrNullResult()
     //        ;
     //    }
-   
-    public function findByEmail(): array 
+
+    public function findByEmail(): array
     {
         $query = $this->createQueryBuilder('a')
             ->orderBy('a.email', 'ASC')
             ->getQuery();
-            
+
         return $query->getResult();
+    }
+
+    public function findAuthorsByBookRange($min, $max): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+            'SELECT a
+            FROM App\Entity\Author a
+            WHERE a.nb_books BETWEEN :min AND :max'
+        )
+            ->setParameter("min", $min)
+            ->setParameter("max", $max);
+        return $query->getResult();
+    }
+
+    public function deleteAuthorsWithNoBooks(): int
+    {
+        $entityManager = $this->getEntityManager();
+
+        $query = $entityManager->createQuery(
+            'DELETE FROM App\Entity\Author a
+         WHERE a.nb_books = 0'
+        );
+
+        return $query->execute();
     }
 }

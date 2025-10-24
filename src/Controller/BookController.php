@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Book;
 use App\Form\BookType;
 use App\Repository\BookRepository;
+use DateTime;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,8 +51,10 @@ final class BookController extends AbstractController
     {
         //$books = $bookRepo->findBy(['published' => true]);
         $books = $bookRepo->booksListByAuthors();
+        $count = $bookRepo->countBooksByRomanceCategory();
         return $this->render('book/list.html.twig', [
             "books" => $books,
+            "nbBooks" => $count,
         ]);
     }
 
@@ -119,4 +122,19 @@ final class BookController extends AbstractController
             "list" => $books,
         ]);
     }
+
+    #[Route('/getBookBetweenDates', name: 'book_getBookBetweenDates')]
+    public function getBookBetweenDates(BookRepository $bookRepo): Response
+    {
+        $date1 = new \DateTime('2021-01-01');
+        $date2 = new \DateTime('2023-01-01');
+        $books = $bookRepo->findBooksBetweenDates($date1, $date2);
+        return $this->render('book/booksBetweenDates.html.twig', [
+            "list" => $books,
+            "date1" => $date1,
+            "date2" => $date2,
+        ]);
+    }
+
+    
 }
