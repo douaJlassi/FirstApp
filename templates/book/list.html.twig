@@ -1,4 +1,8 @@
 <h2>Liste des livres publiés</h2>
+<form method="get" action="{{ path('book_getBookByRef')}}">
+	<input type="text" name="ref" value="">
+	<input type="submit" value="Search">
+</form>
 
 {% if books is empty or books is not defined %}
 	<h3>Aucun livre publié trouvé.</h3>
@@ -6,6 +10,7 @@
 
 	<table border="1">
 		<tr>
+			<th>Reference</th>
 			<th>Title</th>
 			<th>Publish Date</th>
 			<th>Published</th>
@@ -17,6 +22,7 @@
 		{% set lnp=0 %}
 		{% for book in books %}
 			<tr>
+				<td>{{ book.ref }}</td>
 				<td>{{ book.title }}</td>
 				<td>{{ book.publishDate ? book.publishDate|date('Y-m-d') : 'N/A' }}</td>
 				<td>1</td>

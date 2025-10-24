@@ -48,7 +48,8 @@ final class BookController extends AbstractController
     #[Route('/getBooks', name: 'book_getBooks')]
     public function getBooks(BookRepository $bookRepo): Response
     {
-        $books = $bookRepo->findBy(['published' => true]);
+        //$books = $bookRepo->findBy(['published' => true]);
+        $books = $bookRepo->booksListByAuthors();
         return $this->render('book/list.html.twig', [
             "books" => $books,
         ]);
@@ -84,8 +85,38 @@ final class BookController extends AbstractController
     #[Route('/detailsBook/{id}', name: 'book_detailsBook')]
     public function detailsBook(BookRepository $bookRepo, $id): Response
     {
-        return $this->render('book/show.html.twig',[
-            'book'=>$bookRepo->find($id),
+        return $this->render('book/show.html.twig', [
+            'book' => $bookRepo->find($id),
+        ]);
+    }
+
+    #[Route('/getBookByRef', name: 'book_getBookByRef')]
+    public function getBookByRef(BookRepository $bookRepo, Request $request): Response
+    {
+        $ref = $request->query->get('ref');
+        $booksByRef = $bookRepo->searchBookByRef($ref);
+        return $this->render('book/listBookByRef.html.twig', [
+            "list" => $booksByRef,
+            "ref" => $ref,
+        ]);
+    }
+
+    #[Route('/booksBefore2023', name: 'book_listBooksBefore2023')]
+    public function listBooksBefore2023(BookRepository $bookRepo): Response
+    {
+        $books = $bookRepo->booksBefore2023();
+        return $this->render('book/listBooksBefore2023.html.twig', [
+            "list" => $books,
+        ]);
+    }
+
+    #[Route('/updateCategory', name: 'book_updateCategory')]
+    public function updateCategory(BookRepository $bookRepo): Response
+    {
+        $update = $bookRepo->updateCategoryScience();
+        $books = $bookRepo->findAll();
+        return $this->render('book/listBooksCategoryUpdated.html.twig', [
+            "list" => $books,
         ]);
     }
 }

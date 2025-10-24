@@ -67,7 +67,8 @@ final class AuthorController extends AbstractController
     #[Route('/authors', name: 'author_getAuthors')]
     public function getAuthors(AuthorRepository $authRepo): Response
     {
-        $authors = $authRepo->findAll();
+        //$authors = $authRepo->findAll();
+        $authors = $authRepo->findByEmail();
         return $this->render('author/list.html.twig', [
             'authors' => $authors,
         ]);
